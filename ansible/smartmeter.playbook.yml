@@ -1,0 +1,9 @@
+---
+
+- name: smartmeter.yml
+  hosts: localhost
+  any_errors_fatal: "true"
+  gather_facts: "yes"
+  roles:
+    - { role: mosquitto, tags: ["mosquitto"] }
+    - { role: influxdb, tags: ["influxdb"] }

@@ -1,0 +1,5 @@
+---
+
+mosquitto_users:
+  - { username: smartmeter, password: smartMeter#Passw0rd1234 }
+  - { username: gorkhaan, password: Passw0rd1234#1234 }

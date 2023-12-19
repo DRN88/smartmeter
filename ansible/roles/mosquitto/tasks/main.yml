@@ -1,0 +1,49 @@
+---
+
+- name: Install Mosquitto MQTT Server Repository
+  ansible.builtin.apt_repository:
+    repo: ppa:mosquitto-dev/mosquitto-ppa
+    state: present
+
+- name: Install Mosquitto MQTT Server
+  ansible.builtin.apt:
+    name: mosquitto
+    state: present
+
+- name: Remove /etc/mosquitto/users.passwd file
+  ansible.builtin.file:
+    path: /etc/mosquitto/users.passwd
+    state: absent
+
+- name: Touch /etc/mosquitto/users.passwd file
+  ansible.builtin.file:
+    path: /etc/mosquitto/users.passwd
+    state: touch
+
+- name: (Re)generate users.passwd file
+  ansible.builtin.command:
+    argv:
+      - mosquitto_passwd
+      - -b
+      - /etc/mosquitto/users.passwd
+      - "{{ item.username }}"
+      - "{{ item.password }}"
+  with_items: 
+    - "{{ mosquitto_users }}"
+  no_log: true
+  notify: mosquitto_restart
+
+- name: Deploy template conf.d/smartmeter.conf
+  ansible.builtin.template:
+    src: conf.d/smartmeter.conf.j2
+    dest: /etc/mosquitto/conf.d/smartmeter.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: mosquitto_restart
+
+- name: Ensure mosquitto server is enabled and running
+  ansible.builtin.service:
+    name: mosquitto
+    state: started
+    enabled: yes

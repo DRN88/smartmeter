@@ -1,0 +1,6 @@
+---
+
+- name: mosquitto_restart
+  service:
+    name: mosquitto
+    state: restarted

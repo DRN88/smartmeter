@@ -1,0 +1,22 @@
+---
+
+- name: Install InfluxDB repository key
+  ansible.builtin.apt_key:
+    url: https://repos.influxdata.com/influxdata-archive_compat.key
+    state: present
+
+- name: Install InfluxDB repository 
+  ansible.builtin.apt_repository:
+    repo: deb https://repos.influxdata.com/ubuntu "{{ ansible_lsb.codename }}" stable
+    state: present 
+
+- name: Install InfluxDB
+  ansible.builtin.apt:
+    name: influxdb2
+    state: present
+
+- name: Ensure InfluxDB is enabled and started
+  ansible.builtin.service:
+    name: influxdb
+    state: started
+    enabled: yes
